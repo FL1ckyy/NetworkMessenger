@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using Common;
 
 namespace ChatServer
 {
@@ -49,25 +48,26 @@ namespace ChatServer
                     messageBuilder.Append(receivedData);
 
                     string allData = messageBuilder.ToString();
-                    int lastNewLine = allData.LastIndexOf('\n');
 
-                    if (lastNewLine >= 0)
+                    // Ищем конец сообщения (новую строку)
+                    while (true)
                     {
-                        string completeMessages = allData.Substring(0, lastNewLine);
-                        string[] messages = completeMessages.Split('\n');
-
-                        foreach (string messageJson in messages)
+                        int newLineIndex = allData.IndexOf('\n');
+                        if (newLineIndex >= 0)
                         {
+                            string messageJson = allData.Substring(0, newLineIndex).Trim();
                             if (!string.IsNullOrEmpty(messageJson))
                             {
-                                ProcessMessage(messageJson.Trim());
+                                ProcessMessage(messageJson);
                             }
-                        }
 
-                        messageBuilder.Clear();
-                        if (lastNewLine + 1 < allData.Length)
+                            // Убираем обработанное сообщение
+                            allData = allData.Substring(newLineIndex + 1);
+                            messageBuilder = new StringBuilder(allData);
+                        }
+                        else
                         {
-                            messageBuilder.Append(allData.Substring(lastNewLine + 1));
+                            break;
                         }
                     }
                 }
@@ -75,7 +75,7 @@ namespace ChatServer
             catch (Exception ex)
             {
                 Disconnect();
-                _server.LogMessage?.Invoke($"Client error: {ex.Message}");
+                _server.OnLogMessage($"Ошибка клиента: {ex.Message}");
             }
         }
 
@@ -83,12 +83,28 @@ namespace ChatServer
         {
             try
             {
+                // Проверяем, это обычное сообщение или системное (список пользователей)?
+                if (messageJson.StartsWith("USERSLIST:"))
+                {
+                    // Это системное сообщение от сервера, игнорируем
+                    return;
+                }
+                else if (messageJson.StartsWith("USERS:"))
+                {
+                    // Это системное сообщение от сервера, игнорируем
+                    return;
+                }
+
                 Message message = Message.FromJson(messageJson);
 
                 if (string.IsNullOrEmpty(ClientId))
                 {
                     ClientId = message.Author;
-                    _server.LogMessage?.Invoke($"User registered: {ClientId}");
+                    _server.OnLogMessage($"Пользователь зарегистрирован: {ClientId}");
+
+                    // После регистрации отправляем клиенту текущий список пользователей
+                    var userList = _server.GetUserList();
+                    SendUserList(userList);
                 }
                 else
                 {
@@ -97,7 +113,7 @@ namespace ChatServer
             }
             catch (Exception ex)
             {
-                _server.LogMessage?.Invoke($"Error processing message: {ex.Message}");
+                _server.OnLogMessage($"Ошибка обработки сообщения: {ex.Message}");
             }
         }
 
@@ -118,8 +134,8 @@ namespace ChatServer
         {
             try
             {
-                string userListMessage = $"USERS:{string.Join(",", users)}";
-                byte[] data = Encoding.UTF8.GetBytes(userListMessage + "\n");
+                string userListMessage = $"USERSLIST:{string.Join(",", users)}\n";
+                byte[] data = Encoding.UTF8.GetBytes(userListMessage);
                 _stream.Write(data, 0, data.Length);
             }
             catch

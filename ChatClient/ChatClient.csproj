@@ -8,8 +8,4 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="..\Message.cs" Link="Message.cs" />
-  </ItemGroup>
-
 </Project>

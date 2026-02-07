@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using Common;
 
 namespace ChatServer
 {
@@ -28,7 +27,7 @@ namespace ChatServer
             _listener.Start();
             _isRunning = true;
 
-            LogMessage?.Invoke($"Server started on port {port}");
+            OnLogMessage($"Сервер запущен на порту {port}");
 
             Task.Run(() => AcceptClientsAsync());
         }
@@ -44,12 +43,13 @@ namespace ChatServer
                     _clients.Add(handler);
                     handler.StartListening();
 
-                    LogMessage?.Invoke($"New client connected: {client.Client.RemoteEndPoint}");
+                    OnLogMessage($"Новый клиент подключен: {client.Client.RemoteEndPoint}");
+
                     UpdateUsersList();
                 }
                 catch (Exception ex)
                 {
-                    LogMessage?.Invoke($"Error accepting client: {ex.Message}");
+                    OnLogMessage($"Ошибка при подключении клиента: {ex.Message}");
                 }
             }
         }
@@ -66,14 +66,15 @@ namespace ChatServer
                 }
             }
 
-            LogMessage?.Invoke($"{message}");
+            OnLogMessage($"{message}");
         }
 
         public void RemoveClient(ClientHandler client)
         {
             _clients.Remove(client);
             UpdateUsersList();
-            LogMessage?.Invoke($"Client disconnected: {client.ClientId}");
+
+            OnLogMessage($"Клиент отключен: {client.ClientId}");
         }
 
         private void UpdateUsersList()
@@ -86,7 +87,8 @@ namespace ChatServer
                     users.Add(client.ClientId);
                 }
             }
-            UsersUpdated?.Invoke(users);
+
+            OnUsersUpdated(users);
 
             foreach (var client in _clients)
             {
@@ -108,7 +110,31 @@ namespace ChatServer
             }
             _clients.Clear();
             _listener?.Stop();
-            LogMessage?.Invoke("Server stopped");
+
+            OnLogMessage("Сервер остановлен");
+        }
+
+        public void OnLogMessage(string message)
+        {
+            LogMessage?.Invoke(message);
+        }
+
+        public void OnUsersUpdated(List<string> users)
+        {
+            UsersUpdated?.Invoke(users);
+        }
+        public List<string> GetUserList()
+        {
+            List<string> users = new List<string>();
+            foreach (var client in _clients)
+            {
+                if (!string.IsNullOrEmpty(client.ClientId))
+                {
+                    users.Add(client.ClientId);
+                }
+            }
+            return users;
         }
     }
+
 }
