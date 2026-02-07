@@ -1,9 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36518.9 d17.14
+VisualStudioVersion = 17.14.36518.9
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatServer", "ChatServer\ChatServer.csproj", "{3D24A2DC-E03D-43B8-8740-D4B3533FF81D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatClient", "ChatClient\ChatClient.csproj", "{1456BC7A-E337-422B-A865-E465B8D8A1C7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}"
+	ProjectSection(SolutionItems) = preProject
+		Message.cs = Message.cs
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatServer", "ChatServer\ChatServer.csproj", "{02D4F7EC-5802-44C8-A7FB-CA0AEAF90F38}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +18,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3D24A2DC-E03D-43B8-8740-D4B3533FF81D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D24A2DC-E03D-43B8-8740-D4B3533FF81D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D24A2DC-E03D-43B8-8740-D4B3533FF81D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D24A2DC-E03D-43B8-8740-D4B3533FF81D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1456BC7A-E337-422B-A865-E465B8D8A1C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1456BC7A-E337-422B-A865-E465B8D8A1C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1456BC7A-E337-422B-A865-E465B8D8A1C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1456BC7A-E337-422B-A865-E465B8D8A1C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02D4F7EC-5802-44C8-A7FB-CA0AEAF90F38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02D4F7EC-5802-44C8-A7FB-CA0AEAF90F38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02D4F7EC-5802-44C8-A7FB-CA0AEAF90F38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02D4F7EC-5802-44C8-A7FB-CA0AEAF90F38}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
